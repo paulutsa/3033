@@ -1,17 +1,17 @@
-<h1>Create a Buffer Overflow on your Ubuntu VM: Lab 01</h1>
+# Create a Buffer Overflow on your Ubuntu VM: Lab 01
 
 - Turn in screenshots to show your work
 - Use docx or pdf
 - Turn in only one document
 
-<h2>1. Set Up Ubuntu VM: (This part is your Lab 00)</h2>
+### 1. Set Up Ubuntu VM: (This part is your Lab 00)
 
 - Download and install VirtualBox or VMware.
 - Download an Ubuntu Desktop ISO image from the official website.
 - Create a new virtual machine and install Ubuntu using the ISO image as the installation source.
 
 
-<h2>2. Install Development Tools</h2>
+### 2. Install Development Tools 
 
 - Open a terminal in your Ubuntu VM.
 - Install build-essential and gdb for development and debugging tools.
@@ -22,7 +22,7 @@ sudo apt install build-essential gdb
 ```
 
 
-<h2>3. Create a Vulnerable C Program</h2>
+### 3. Create a Vulnerable C Program
 
 - Create a simple C program with a buffer overflow vulnerability. 
 - Type gpedit in the terminal window
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
 }
 ```
 
-<h2>4. Compile the Vulnerable Program</h2>
+### 4. Compile the Vulnerable Program 
 
 ```
 gcc -o vulnerable vulnerable.c -fno-stack-protector -m32
@@ -63,7 +63,7 @@ gcc -o vulnerable vulnerable.c -fno-stack-protector -m32
 sudo sysctl -w kernel.randomize_va_space=0
 ```
 
-<h2>6. Test the Vulnerable Program</h2>
+### 6. Test the Vulnerable Program 
 
 - Run the program with a long input to trigger the buffer overflow.
 ```
@@ -71,7 +71,7 @@ sudo sysctl -w kernel.randomize_va_space=0
 ```
 - You should observe a segmentation fault due to the buffer overflow.
 
-<h2>7. Set Up GDB for Debugging</h2>
+### 7. Set Up GDB for Debugging 
 
 - Open the program in GDB for debugging.
 
@@ -79,7 +79,7 @@ sudo sysctl -w kernel.randomize_va_space=0
 gdb -q ./vulnerable
 ```
 
-<h2>8. Debug the Vulnerable Program</h2>
+### 8. Debug the Vulnerable Program 
 
 - Set a breakpoint at the vulnerable function and run the program
 - Break vulnerable_function
@@ -89,7 +89,7 @@ run $(python -c 'print("A" * 80)')
 ```
 - You can now examine the stack and registers to understand how the buffer overflow occurred.
 
-<h2>9. Cleanup</h2>
+### 9. Cleanup 
 
 - After completing the lab, reset ASLR to its default value
 
