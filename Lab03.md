@@ -1,136 +1,202 @@
-# Memory Management with GDB: Lab 02
+  ***Introduction to Sysinternals Tools for Malware Analysis: Lab 03***
 
-- Turn in screenshots to show your work (You can show multiple steps with one screenshot)
-- Use docx or pdf
-- Turn in only one document
+**Objective:** Familiarize yourself with Sysinternals tools used for malware analysis and Windows administration. Practice using them with a simple software executable.
 
-### 1. Compile and Run the Code
-- `Objective:` This exercise helps you learn about memory management and how to fix memory-related problems using GDB (a debugging tool).
-- Save your first program as `memory_management.c`
-```c
+**Software Requirements:**
 
-#include <stdio.h>
-#include <stdlib.h>
+1. Windows 10 or 11 machine
+1. Sysinternals Suite installed
 
-int main() {
-    // Memory Leak: Allocating memory but forgetting to free it
-    char *memory_leak = (char *)malloc(10);
-    
-    // Uninitialized Variable: Using a variable before giving it a value
-    int uninitialized_variable;
-    printf("Uninitialized Variable: %d\n", uninitialized_variable);
-    
-    // Invalid Memory Access: Trying to use memory that doesn't belong to us
-    int array[5];
-    array[6] = 42;
+**Lab Outline:**
 
-    // To fix the memory leak, we should free the allocated memory
-    free(memory_leak);
-    
-    return 0;
-}
-```
-### 2.  Use GDB to Identify and Understand Memory Problems
+1. Introduction to the Sysinternals Suite
+1. Overview of the main tools: Process Explorer, Process Monitor, Autoruns, and TCPView.
+1. Creating and running a simple software executable.
+1. Analyzing the executable using Sysinternals tools.
 
-- Compile the `memory_management.c `program with debugging symbols enabled. This will allow you to use GDB effectively.
+**1. Introduction to the Sysinternals Suite**
 
-`gcc -g -o memory_management memory_management.c`
+Sysinternals Suite is a collection of system utilities and technical information related to Windows internals. It's especially valuable for system administrators, IT professionals, and malware analysts.
 
-- Open GDB by running the following command, specifying the name of the compiled program:
+**2. Overview of the Main Tools**
 
-`gdb ./memory_management`
+*Screenshot 1: Display icons and main interfaces of each tool.*
 
-- Set a breakpoint at the beginning of the main function to pause program execution at that point:
+a. **Process Explorer**
+Shows a detailed view of all processes running on the system. It's like the Task Manager but with more in-depth details.
 
-`break main`
+b. **Process Monitor**
+Monitors real-time file system, registry, and process/thread activity.
 
-- Start running the program within GDB:
+c. **Autoruns**
+Shows what programs are configured to startup during boot or login.
 
-`run`
+d. **TCPView**
+Displays all active TCP and UDP endpoints, revealing which processes are making network connections.
 
-- When the program pauses at the breakpoint, use GDB to examine the memory leak issue. Check the value of the memory_leak variable to see if it's correctly allocated and freed:
- 
-`print memory_leak`
-- You should see that `memory_leak` points to a memory address.
+**3. Creating and Running a Simple Software Executable**
 
-- Execute the program to step through the code using the `next` command in GDB. This allows you to see how the uninitialized variable and invalid memory access issues unfold:
+For this lab, we will create a basic program that spawns multiple processes and establishes a network connection. Copy and compile the following Python code:
 
-`next`
-- Keep using next to step through the code until you reach the uninitialized variable and invalid memory access sections.
+pythonCopy code
 
-- When you reach the uninitialized variable part, examine the uninitialized_variable:
+``
+import subprocess
+
+import socket
+
+def create\_processes():
+
+`    `for \_ in range(5):
+
+`        `subprocess.Popen(["notepad.exe"])
+
+def establish\_connection():
+
+`    `s = socket.socket(socket.AF\_INET, socket.SOCK\_STREAM)
+
+`    `s.connect(("example.com", 80))
+
+`    `s.close()
+
+if \_\_name\_\_ == "\_\_main\_\_":
+
+`    `create\_processes()
+
+`    `establish\_connection()
+``
+
+Save the above code as malware\_sample.py and compile it using a tool like PyInstaller:
+
+cssCopy code
+
+pyinstaller --onefile malware\_sample.py
+
+*Screenshot 2: Show the compiled executable.*
+
+**4. Analyzing the Executable using Sysinternals Tools**
+
+a. **Using Process Explorer**
+
+*Screenshot 3: Open Process Explorer.*
+
+i. Double-click on the malware\_sample.exe process. ii. Under the Image tab, note the Parent (this indicates which process started the executable). iii. Move to the Threads tab to see the threads spawned by the process.
+
+*Questions:*
+
+- Which parent process launched malware\_sample.exe?
+- How many threads were created?
+
+b. **Using Process Monitor**
+
+*Screenshot 4: Set filters in Process Monitor.*
+
+i. Start Process Monitor. ii. Set a filter to only show events related to malware\_sample.exe. iii. Run the malware\_sample.exe. iv. Observe the file system, registry, and process activity.
+
+*Questions:*
+
+- What files did the executable access?
+- Were any registry keys modified?
+
+c. **Using Autoruns**
+
+*Screenshot 5: Scanning with Autoruns.*
+
+i. Start Autoruns. ii. Search for malware\_sample.exe. iii. Note if it's set to start during boot or login.
+
+*Questions:*
+
+- Did malware\_sample.exe set itself to start at boot?
+
+d. **Using TCPView**
+
+*Screenshot 6: Network connections in TCPView.*
+
+i. Start TCPView. ii. Run the malware\_sample.exe. iii. Observe any new network connections.
+
+*Questions:*
+
+- To which domain did malware\_sample.exe establish a connection?
+- On which port?
+
+Upon completion, the student should have a basic understanding of the Sysinternals tools used for malware analysis.
 
 
-`print uninitialized_variable`
-- You'll notice that it contains garbage data since it hasn't been initialized.
+**
 
 
-- When you reach the invalid memory access part, use GDB to identify the issue. Inspect the array variable and how it's accessed:
+** 
+\*
 
 
-`print array`
-- You'll notice that the program is trying to access memory outside the bounds of the array.
+e. **VMMap**
+This tool shows a breakdown of a process's committed virtual memory types. It's useful for understanding the memory footprint of an application.
 
-- After analyzing the memory issues, exit GDB:
+f. **Sigcheck**
+Sigcheck is a command-line utility that shows file version number, timestamp information, and digital signature details, including certificate chains.
 
-`quit`
-### 3. Fix the Memory Issues
+g. **LiveKd**
+This utility allows you to start any of the supported kernel-mode debuggers on a live system. It's a way to inspect the system's memory and kernel without halting the system.
 
-Now that you've identified the memory problems using GDB, you can go back to your code (memory_management.c) and fix them. To fix the issues:
+h. **Procdump**
+Procdump is a command-line utility that monitors processes for CPU spikes and generates crash dumps. It's an advanced tool for procuring comprehensive memory dumps.
 
-- Free the allocated memory (free(memory_leak);) to resolve the memory leak.
+i. **AccessChk**
+This tool reports the effective permissions on files, registry keys, processes, etc. It's useful for understanding what operations can be performed on specific objects by different users.
 
-- Locate the line where memory is allocated using malloc. In this case, it's the line where memory_leak is allocated:
+**4. Extended Analysis of the Executable using Sysinternals Tools**
 
-`char *memory_leak = (char *)malloc(10);`
-- After using the allocated memory, free it using the free function:
+e. **Using VMMap**
 
-`free(memory_leak);`
-- Initialize the uninitialized_variable Before Using it
+*Screenshot 7: Analyzing malware\_sample.exe with VMMap.*
 
-- Find the line where uninitialized_variable is used:
-`printf("Uninitialized Variable: %d\n", uninitialized_variable);`
-- Initialize uninitialized_variable with a value before using it. For example, set it to 0:
+i. Start VMMap and open malware\_sample.exe. ii. Examine the different types of memory allocated by the process.
 
-`int uninitialized_variable = 0;`
+*Questions:*
 
-- Ensure that array indices do not exceed the array's bounds.
-- Locate the line where you access an array element outside of its bounds. In this case, it's the line where array[6] is accessed:
+- How much private memory has the executable reserved?
+- Are there any noticeable memory-mapped files?
 
-`array[6] = 42;`
-- Ensure that the array index stays within the bounds of the array. If array has a size of 5, you should access elements from 0 to 4:
+f. **Using Sigcheck**
 
-`array[4] = 42;` // Accessing the last element of a 5-element array
-- Review the rest of your code to ensure that array indices are always within bounds to avoid undefined behavior.
+*Screenshot 8: Running Sigcheck on malware\_sample.exe.*
 
-- After making these changes, your modified code should look like this:
-```c
-#include <stdio.h>
-#include <stdlib.h>
+i. Open Command Prompt and navigate to the directory containing malware\_sample.exe. ii. Run sigcheck malware\_sample.exe. iii. Observe the details provided.
 
-int main() {
-    // Resolve Memory Leak: Free the allocated memory
-    char *memory_leak = (char *)malloc(10);
-    free(memory_leak);
-    
-    // Initialize uninitialized_variable before using it
-    int uninitialized_variable = 0;
-    printf("Initialized Variable: %d\n", uninitialized_variable);
-    
-    // Ensure Array Indices Do Not Exceed Bounds
-    int array[5];
-    array[4] = 42; // Accessing the last element of a 5-element array
-    
-    return 0;
-}
-```
+*Questions:*
 
-  
-- After making these changes, recompile the program and run it outside of GDB to verify that the issues have been resolved
+- Is malware\_sample.exe digitally signed?
+- If signed, who is the signer?
 
-`gcc -o memory_management_fixed memory_management.c`
-- Run the program to check your work
-  
-`./memory_management_fixed`
-- By following these steps, you've resolved the memory leak, initialized the variable properly, and ensured that array indices stay within bounds, making your code more reliable and free from memory-related issues.
-- These steps will help you use GDB to identify and understand memory problems in your code, allowing you to fix them effectively.
+g. **Using LiveKd**
+
+*Screenshot 9: Running LiveKd.*
+
+i. Launch LiveKd. ii. Initiate a debugging session and inspect the kernel's current state.
+
+*Questions:*
+
+- Can you identify any active system processes?
+- What is the state of the memory?
+
+h. **Using Procdump**
+
+*Screenshot 10: Generating a memory dump of malware\_sample.exe.*
+
+i. Run procdump -ma malware\_sample.exe. ii. This will generate a full memory dump of the process.
+
+*Questions:*
+
+- What is the size of the generated memory dump?
+- Can you identify any strings or sections within the dump?
+
+i. **Using AccessChk**
+
+*Screenshot 11: Checking permissions with AccessChk.*
+
+i. In the Command Prompt, run accesschk -p malware\_sample.exe. ii. Observe the permissions of different users for the executable.
+
+*Questions:*
+
+- Which users/groups have read permissions for malware\_sample.exe?
+- Are there any unusual permission assignments?
