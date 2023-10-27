@@ -19,7 +19,7 @@
 
 Sysinternals Suite is a collection of system utilities and technical information related to Windows internals. It's especially valuable for system administrators, IT professionals, and malware analysts.
 
-### **2. Overview of the Main Tools**
+### 2. Overview of the Main Tools
 
 
 a. `Process Explorer`
@@ -51,7 +51,8 @@ This tool reports the effective permissions on files, registry keys, processes, 
 
 ### **3. Creating and Running a Simple Software Executable**
 
-For this lab, we will create a basic program that spawns multiple processes and establishes a network connection. Copy and compile the following Python code:
+- This code writes data to a file to mimic data exfiltration, creating a covert communications channel to a C2 server, and adding a persistent connection.
+- Copy and compile the following Python code:
 
 
 ```python
@@ -112,13 +113,13 @@ Navigate to the Script's Directory: Use the cd command to navigate to the direct
 
 a. `Using Process Explorer`
 
-*Screenshot 1: Open Process Explorer.*
+*Screenshot 1: Open Process Explorer*
 
 - Open Process Explorer and double-click on the malware_sample process in the list of running processes
 - Under the Image tab, note the Parent (this indicates which process started the executable). 
 - Move to the Threads tab to see the threads spawned by the process.
 
-*Questions:*
+Questions:
 
 - Which parent process launched malware_sample.exe?
 - How many threads were created?
@@ -132,7 +133,7 @@ b. `Using Process Monitor`
 - Run the `malware_sample.exe`
 - Observe the file system, registry, and process activity.
 
-*Questions:*
+Questions:
 
 - What files did the executable access?
 - Were any registry keys modified?
@@ -145,7 +146,7 @@ c. `Using Autoruns`
 - Search for malware_sample.exe.
 - Note if it's set to start during boot or login.
 
-*Questions:*
+Questions:
 
 - Did `malware_sample.exe` set itself to start at boot?
 
@@ -157,20 +158,20 @@ d. `Using TCPView`
 - Run the `malware_sample.exe`.
 - Observe any new network connections.
 
-*Questions:*
+Questions:
 
 - To which domain did malware_sample.exe establish a connection?
 - On which port?
 
-### **5. Choose 3 Tools from Part 2's overview of tools**
--provide screenshots
+### 5. Choose 3 Tools from Part 2's overview of tools 
+*Screenshot 5,6,7: Screenshot the 3 Tools running*
 
-*Questions:*
+Questions:
 
 - what tool did you choose and what does it do?
 - how does this tool help in your observation?
 
-### **6. Concisely answer the follownig questions (1-2 sentences)**
+### 6. Concisely answer the following questions (1-2 sentences) 
 Note: There are no right or wrong answers.  This part is a thought exercise.  I will not grade these answers but I expect you to complete these questions to show you understood the assignment.
 
 General Understanding:
