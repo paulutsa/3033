@@ -11,8 +11,9 @@
 - Introduction to Systernals
 - Overview of the main tools: Process Explorer, Process Monitor, Autoruns, and TCPView.
 - Creating and running a simple software executable.
-- Analyzing the executable using Sysinternals tools Part 1
-- Analyzing the executable using Sysinternals tools Part 2
+- Analyzing the executable using Sysinternals tools
+- Choose 3 other tools mentioned in Part 2 and screenshot your results.  
+
 
 ### **1. Introduction to the Sysinternals Suite**
 
@@ -20,7 +21,6 @@ Sysinternals Suite is a collection of system utilities and technical information
 
 ### **2. Overview of the Main Tools**
 
-*Screenshot 1: Show tht you have it installed.*
 
 a. `Process Explorer`
 Shows a detailed view of all processes running on the system. It's like the Task Manager but with more in-depth details.
@@ -56,50 +56,76 @@ For this lab, we will create a basic program that spawns multiple processes and 
 
 ```python
 
-import subprocess
 import socket
+import os
+import winreg as reg
 
-def create_processes():
-    for _ in range(5):
-        subprocess.Popen(["notepad.exe"])
+def write_data_to_file():
+    with open("sample_data.txt", "w") as file:
+        file.write("This is a benign data sample.")
 
-def establish_connection():
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect(("example.com", 80))
-    s.close()
+def establish_network_connection():
+    server_ip = '8.8.8.8'  # Google's public DNS server (benign, for illustrative purposes)
+    server_port = 53  # DNS port
+    
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.sendto(b'hello', (server_ip, server_port))
+        s.recvfrom(1024)
+
+def modify_registry():
+    key_name = r"Software\Microsoft\Windows\CurrentVersion\Run"
+    try:
+        # Open the key in read-write mode
+        reg_key = reg.OpenKey(reg.HKEY_CURRENT_USER, key_name, 0, reg.KEY_WRITE)
+        reg.SetValueEx(reg_key, "BenignSample", 0, reg.REG_SZ, r"C:\Path\to\BenignSample.exe")
+        reg.CloseKey(reg_key)
+    except Exception as e:
+        print(f"Failed to write to registry: {e}")
 
 if __name__ == "__main__":
-    create_processes()
-    establish_connection()
+    write_data_to_file()
+    establish_network_connection()
+    modify_registry()
+
  
 ``` 
+Save the above code as `malware_sample.py` then compile and run.  If you don't have a favorite compiler feel free to choose one of the options below.
 
-
-Save the above code as `malware_sample.py` and compile it using a tool like *PyInstaller* using the command below:
-_Note: if you have other compilers that you prefer, that is fine_
+`Option 1:` compile it using a tool like *PyInstaller* using the command below:
 
 ```pyinstaller --onefile malware_sample.py```
 
-*Screenshot 2: Show the compiled executable from your favorite compiler, IDE, etc. *
-
+`Option 2: `
+- Download Python:
+  Go to the official Python website and download the latest version of Python for Windows.
+- Install Python: Run the downloaded installer. Ensure that you check the box that says "Add Python X.Y to PATH" (where X.Y is the Python version number). This will add Python to your system's environment variables, allowing you to run Python from the Command Prompt.
+- Create the Python Script:
+Write the Script: Open a text editor (like Notepad) and paste the provided Python code into it.
+Save the Script: Save the file with a .py extension, for example malware_sample.py.
+- Run the Python Script:
+Open Command Prompt: Press Windows + R, type cmd, and press Enter.
+Navigate to the Script's Directory: Use the cd command to navigate to the directory where you saved the Python script. For example, if you saved it on the Desktop, you would type something like cd C:\Users\YourUsername\Desktop.
+- Run the Script:
+  Type python malware_sample.py and press Enter.
+ 
 ### **4. Analyzing the Executable using Sysinternals Tools**
 
 a. `Using Process Explorer`
 
-*Screenshot 3: Open Process Explorer.*
+*Screenshot 1: Open Process Explorer.*
 
-- Double-click on the `malware_sample.exe process`.
+- Open Process Explorer and double-click on the malware_sample process in the list of running processes
 - Under the Image tab, note the Parent (this indicates which process started the executable). 
 - Move to the Threads tab to see the threads spawned by the process.
 
 *Questions:*
 
-- Which parent process launched malware\_sample.exe?
+- Which parent process launched malware_sample.exe?
 - How many threads were created?
 
 b. `Using Process Monitor`
 
-*Screenshot 4: Set filters in Process Monitor.*
+*Screenshot 2: Set filters in Process Monitor.*
 
 - Start Process Monitor.
 - Set a filter to only show events related to `malware_sample.exe`.
@@ -113,10 +139,10 @@ b. `Using Process Monitor`
 
 c. `Using Autoruns`
 
-*Screenshot 5: Scanning with Autoruns.*
+*Screenshot 3: Scanning with Autoruns.*
 
 - Start Autoruns.
-- Search for malware\_sample.exe.
+- Search for malware_sample.exe.
 - Note if it's set to start during boot or login.
 
 *Questions:*
@@ -125,7 +151,7 @@ c. `Using Autoruns`
 
 d. `Using TCPView`
 
-*Screenshot 6: Network connections in TCPView.*
+*Screenshot 4: Network connections in TCPView.*
 
 - Start TCPView.
 - Run the `malware_sample.exe`.
@@ -133,69 +159,33 @@ d. `Using TCPView`
 
 *Questions:*
 
-- To which domain did malware\_sample.exe establish a connection?
+- To which domain did malware_sample.exe establish a connection?
 - On which port?
 
- ###  **4. Analysis of the Executable using Sysinternals Tools Part 2**
-
-
-e. `Using VMMap`
-
-*Screenshot 7: Analyzing malware\_sample.exe with VMMap.*
-
-- Start VMMap and open `malware_sample.exe`. 
-- Examine the different types of memory allocated by the process.
+### **5. Choose 3 Tools from Part 2's overview of tools**
+-provide screenshots
 
 *Questions:*
 
-- How much private memory has the executable reserved?
-- Are there any noticeable memory-mapped files?
+- what tool did you choose and what does it do?
+- how does this tool help in your observation?
 
-f. `Using Sigcheck`
+### **6. Concisely answer the follownig questions (1-2 sentences)**
+Note: There are no right or wrong answers.  This part is a thought exercise.  I will not grade these answers but I expect you to complete these questions to show you understood the assignment.
 
-*Screenshot 8: Running Sigcheck on `malware_sample.exe`
+General Understanding:
+- What are the three main actions this script attempts to perform (refer to the three main functions)
+- Which libraries are imported to support the operations of this script?
+- What protocol and port does the script use to communicate with the remote server?
 
- - Open Command Prompt and navigate to the directory containing `malware_sample.exe`. 
- - Run sigcheck `malware_sample.exe`.
- - Observe the details provided.
+File Operation (write_data_to_file):
+- What's the name of the file that the script writes data to?
+- Using ProcMon, can you identify the exact time when the file "sample_data.txt" was created or modified?
+- If you were to track this activity using Sysinternals tools, which tool and filters would you use?
 
-*Questions:*
-
-- Is malware\_sample.exe digitally signed?
-- If signed, who is the signer?
-
-g. `Using LiveKd`
-
-*Screenshot 9: Running LiveKd.*
+Network Communication (establish_network_connection):
+- To which IP address does the script attempt to establish a connection?
+- Why might the choice of the IP address and port be considered "benign" or non-malicious in this context?
+- Using TCPView, were you able to observe the UDP connection initiated by this script? What details could you gather?
 
  
-- Launch LiveKd.
-- Initiate a debugging session and inspect the kernel's current state.
-
-*Questions:*
-
-- Can you identify any active system processes?
-- What is the state of the memory?
-
-h.`Using Procdump`
-
-*Screenshot 10: Generating a memory dump of malware\_sample.exe.*
-
-i. Run `procdump -ma malware_sample.exe`. ii. This will generate a full memory dump of the process.
-
-*Questions:*
-
-- What is the size of the generated memory dump?
-- Can you identify any strings or sections within the dump?
-
-i. `Using AccessChk`
-
-*Screenshot 11: Checking permissions with AccessChk.*
-
- - In the Command Prompt, run `accesschk -p malware_sample.exe` 
- - Observe the permissions of different users for the executable.
-
-*Questions:*
-
-- Which users/groups have read permissions for `malware_sample.exe`?
-- Are there any unusual permission assignments?
