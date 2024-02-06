@@ -15,6 +15,8 @@
 
 - Open a terminal in your Ubuntu VM.
 - Install build-essential and gdb for development and debugging tools.
+- Install multilib so you can compile your program as 32-bit
+- You will run it as 32-bit to ensure the vulnerability works
 
 ```
 sudo apt update
@@ -58,7 +60,8 @@ int main(int argc, char **argv) {
 gcc -o vulnerable.c -m32 vulnerable
 ```
 
-<h2>5. Disable ASLR</h2>
+### 5. Disable ASLR 
+-Disable ASLR which is a Microsoft feature that prevents buffer overflows by randomly moving data to different places in memory.  This makes it more unpredictable for the malware writers to know where to send the malicious code.
 
 ```
 sudo sysctl -w kernel.randomize_va_space=0
