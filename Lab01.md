@@ -6,9 +6,9 @@
 
 ### 1. Set Up Ubuntu VM: (This part is your Lab 00)
 
-- Download and install VirtualBox or VMware.
+- Download and install Hypervisor (VirtualBox or VMware)
 - Download an Ubuntu Desktop ISO image from the official website.
-- Create a new virtual machine and install Ubuntu using the ISO image as the installation source.
+- Create a new virtual machine and install Ubuntu using the ISO image (CD/DVD) as the installation source.
 
 
 ### 2. Install Development Tools 
@@ -19,6 +19,7 @@
 ```
 sudo apt update
 sudo apt install build-essential gdb
+sudo apt-get install gcc-multilib
 ```
 
 
@@ -54,7 +55,7 @@ int main(int argc, char **argv) {
 ### 4. Compile the Vulnerable Program 
 
 ```
-gcc -o vulnerable vulnerable.c -fno-stack-protector -m32
+gcc -o vulnerable.c -m32 vulnerable
 ```
 
 <h2>5. Disable ASLR</h2>
@@ -69,7 +70,9 @@ sudo sysctl -w kernel.randomize_va_space=0
 ```
 ./vulnerable $(python -c 'print("A" * 80)')
 ```
-- You should observe a segmentation fault due to the buffer overflow.
+- You should observe a segmentation fault due to the buffer overflow (This means that if your program crashes, you did it right!).
+- In the next step, we will begin inspecting our code by stepping through it line by line with GDB
+- GDB will help us see exactly where the program crashed in the buffer overflow!
 
 ### 7. Set Up GDB for Debugging 
 
@@ -87,11 +90,11 @@ gdb -q ./vulnerable
 ```
 run $(python -c 'print("A" * 80)')
 ```
-- You can now examine the stack and registers to understand how the buffer overflow occurred.
+- You can now examine the stack and registers to understand how the buffer overflow occurred (These stacks and registers will be the parts of your virtual memory with memory addresses!)
 
 ### 9. Cleanup 
 
-- After completing the lab, reset ASLR to its default value
+- After completing the lab, reset ASLR to its default value (if you don't do this, your VM will be vulnerable to common attacks!)
 
 ```
 sudo sysctl -w kernel.randomize_va_space=2
