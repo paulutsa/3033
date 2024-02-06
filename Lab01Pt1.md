@@ -35,7 +35,7 @@
 
 ### 5. Understand Process States and Process Management 
 - Understand Process States (Running, Waiting, etc.) and their meanings.
-- Manage processes using commands like `kill, killall, and pkill`.
+- Manage processes using commands like `kill`, `killall`, and `pkill`.
 - Demonstrate how to use these commands on their processes
 - Screenshot
   
@@ -51,6 +51,6 @@
 - Screenshot
 
 ### 8. Create New Processes 
-- Create new processes using the & operator, nohup, and bg commands.
+- Create new processes using the `&` operator, `nohup`, and `bg` commands.
 - Screenshot  
 
