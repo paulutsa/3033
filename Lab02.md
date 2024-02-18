@@ -90,9 +90,9 @@ Now that you've identified the memory problems using GDB, you can go back to you
 
 - Find the line where uninitialized_variable is used:
 `printf("Uninitialized Variable: %d\n", uninitialized_variable);`
-- Initialize uninitialized_variable with a value before using it. For example, set it to 0:
+- Initialize uninitialized_variable with a value before using it. For example, set it to 1337:
 
-`int uninitialized_variable = 0;`
+`int uninitialized_variable = 1337;`
 
 - Ensure that array indices do not exceed the array's bounds.
 - Locate the line where you access an array element outside of its bounds. In this case, it's the line where array[6] is accessed:
@@ -114,7 +114,7 @@ int main() {
     free(memory_leak);
     
     // Initialize uninitialized_variable before using it
-    int uninitialized_variable = 0;
+    int uninitialized_variable = 1337;
     printf("Initialized Variable: %d\n", uninitialized_variable);
     
     // Ensure Array Indices Do Not Exceed Bounds
